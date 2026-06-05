@@ -431,7 +431,7 @@ else:
                         return ""
 
                     st.dataframe(
-                        comp_df.style.applymap(color_trend, subset=["Trend"]),
+                        comp_df.style.map(color_trend, subset=["Trend"]),
                         use_container_width=True
                     )
                     fig_comp = px.bar(
