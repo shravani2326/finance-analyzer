@@ -204,7 +204,7 @@ else:
                     st.success("✅ All categories saved! Reloading...")
                     st.rerun()
 
-            st.stop()
+            
 
         # ── Month Confirmation ────────────────────
         save_key = f"saved_{uploaded_file.name}_{user_id}"
