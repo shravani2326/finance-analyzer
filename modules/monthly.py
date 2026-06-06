@@ -6,14 +6,11 @@ from pathlib import Path
 # Load .env from parent folder (finance_analyzer/)
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / "a.env")
 
-MONTH_ORDER = {
-    "Jan-2024":1,  "Feb-2024":2,  "Mar-2024":3,
-    "Apr-2024":4,  "May-2024":5,  "Jun-2024":6,
-    "Jul-2024":7,  "Aug-2024":8,  "Sep-2024":9,
-    "Oct-2024":10, "Nov-2024":11, "Dec-2024":12,
-    "Jan-2025":13, "Feb-2025":14, "Mar-2025":15
-}
-
+def get_month_order(month_year):
+    try:
+        return int(pd.to_datetime(month_year, format="%b-%Y").strftime("%Y%m"))
+    except:
+        return 0
 def get_connection():
     return mysql.connector.connect(
        host     = os.getenv("DB_HOST"),
@@ -68,7 +65,7 @@ def save_monthly_summary(df, month_year, user_id):
     total_expense = df[df["Amount"] < 0]["Amount"].abs().sum()
     net_savings   = total_income - total_expense
     month_name    = pd.to_datetime(df["Date"].iloc[0]).strftime("%B")
-    order         = MONTH_ORDER.get(month_year, 0)
+    order         = get_month_order(month_year)
 
     # Delete existing record for this user and month
     cursor.execute(
