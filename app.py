@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from modules.parser      import load_csv, get_summary
-from modules.categorizer import get_category, save_new_merchant, get_all_categories
+from modules.categorizer import get_category, save_new_merchant, get_all_categories, save_new_category
 from modules.insights    import generate_ai_recommendations, DISCRETIONARY_CATEGORIES, ESSENTIAL_CATEGORIES
 from modules.monthly     import (create_tables, save_monthly_summary,
                                   get_previous_month, get_monthly_history,
