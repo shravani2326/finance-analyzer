@@ -188,23 +188,21 @@ else:
                 submitted = st.form_submit_button("✅ Save All Categories", use_container_width=True)
 
                 if submitted:
+                    all_saved = True
                     for merchant, category in new_entries.items():
                         if category == "➕ Add New Category":
                             new_cat_name = new_cat_inputs[merchant].strip()
                             if new_cat_name:
                                 save_new_merchant(merchant, new_cat_name)
-                                st.success(f"✅ '{merchant}' → '{new_cat_name}' saved!")
                             else:
                                 st.error(f"❌ Please enter category name for {merchant}")
+                                all_saved = False
                         else:
                             save_new_merchant(merchant, category)
-                            st.success(f"✅ '{merchant}' → '{category}' saved!")
 
-                    st.success("✅ All categories saved! Reloading...")
-import time
-time.sleep(1)
-df["Category"] = df["Description"].apply(get_category)
-st.rerun()
+                    if all_saved:
+                        st.success("✅ All categories saved! Reloading...")
+                        st.rerun()
 
             
 
@@ -228,6 +226,10 @@ st.rerun()
                     if st.button("✅ Confirm & Analyze", use_container_width=True):
                         save_monthly_summary(df, month_year, user_id)
                         st.session_state[save_key] = month_year
+                        # Clear any cached AI results for fresh analysis
+                        ai_cache_key = f"ai_{user_id}_{month_year}"
+                        if ai_cache_key in st.session_state:
+                            del st.session_state[ai_cache_key]
                         st.rerun()
 
             st.stop()
@@ -420,9 +422,9 @@ st.rerun()
                 prev_month = get_previous_month(month_year, user_id)
 
                 if prev_month is None:
-                    st.info("⚠️ No previous month data found.")
-                    st.write("ℹ️ This is your first month on record.")
-                    st.write("📌 Upload next month's file to see comparison.")
+                    st.info("⚠️ No previous month data found for comparison.")
+                    st.write("ℹ️ Make sure you have uploaded and confirmed at least 2 months of data.")
+                    st.write("📌 Go to History tab to see all uploaded months.")
                 else:
                     st.success(f"Comparing **{month_year}** vs **{prev_month}**")
                     comp_df = compare_months(month_year, prev_month, user_id)
