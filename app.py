@@ -189,16 +189,21 @@ else:
 
                 if submitted:
                     all_saved = True
-                    for merchant, category in new_entries.items():
+                    for merchant in unknown:
+                        category     = new_entries.get(merchant, "")
+                        new_cat_name = new_cat_inputs.get(merchant, "").strip()
+
                         if category == "➕ Add New Category":
-                            new_cat_name = new_cat_inputs[merchant].strip()
                             if new_cat_name:
-                                save_new_merchant(merchant, new_cat_name)
+                                save_new_category(new_cat_name)
+                                save_new_merchant(merchant.upper().strip(), new_cat_name)
+                                st.success(f"✅ '{merchant}' → '{new_cat_name}' saved!")
                             else:
-                                st.error(f"❌ Please enter category name for {merchant}")
+                                st.error(f"❌ Please enter a category name for: {merchant}")
                                 all_saved = False
                         else:
-                            save_new_merchant(merchant, category)
+                            save_new_merchant(merchant.upper().strip(), category)
+                            st.success(f"✅ '{merchant}' → '{category}' saved!")
 
                     if all_saved:
                         st.success("✅ All categories saved! Reloading...")
