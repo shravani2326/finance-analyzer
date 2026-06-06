@@ -52,9 +52,10 @@ def save_new_merchant(merchant, category):
         save_new_category(category)
     conn   = get_connection()
     cursor = conn.cursor()
+    # Save merchant keyword in UPPERCASE so get_category() can match it
     cursor.execute(
         "INSERT IGNORE INTO merchant_categories VALUES(%s,%s)",
-        (merchant, category)
+        (merchant.upper().strip(), category)
     )
     conn.commit()
     cursor.close()
