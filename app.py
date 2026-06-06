@@ -200,11 +200,11 @@ else:
                             save_new_merchant(merchant, category)
                             st.success(f"✅ '{merchant}' → '{category}' saved!")
 
-                   st.success("✅ All categories saved! Reloading...")
-	           import time
-		   time.sleep(1)
-		   df["Category"] = df["Description"].apply(get_category)
-		   st.rerun()
+                    st.success("✅ All categories saved! Reloading...")
+import time
+time.sleep(1)
+df["Category"] = df["Description"].apply(get_category)
+st.rerun()
 
             
 
