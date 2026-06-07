@@ -355,6 +355,8 @@ else:
                     st.subheader("📈 Daily Spending Trend")
                     daily         = expenses.copy()
                     daily["Date"] = pd.to_datetime(daily["Date"])
+                    current_month = daily["Date"].dt.to_period("M").mode()[0]
+                    daily         = daily[daily["Date"].dt.to_period("M") == current_month]
                     daily_spend   = daily.groupby("Date")["Amount"].sum().abs().reset_index()
                     fig_line      = px.line(daily_spend, x="Date", y="Amount", markers=True)
                     st.plotly_chart(fig_line, use_container_width=True)
