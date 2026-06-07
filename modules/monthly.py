@@ -104,31 +104,33 @@ def save_monthly_summary(df, month_year, user_id):
 
 
 def get_previous_month(current_month_year, user_id):
-    conn   = get_connection()
-    cursor = conn.cursor()
+    try:
+        # Calculate previous month from calendar, not upload order
+        current_date  = pd.to_datetime(current_month_year, format="%b-%Y")
+        # Go back 1 month
+        if current_date.month == 1:
+            prev_date = current_date.replace(year=current_date.year - 1, month=12)
+        else:
+            prev_date = current_date.replace(month=current_date.month - 1)
 
-    # Get only THIS user's months in order
-    cursor.execute("""
-        SELECT month_year FROM monthly_summary
-        WHERE user_id = %s
-        ORDER BY month_order ASC
-    """, (user_id,))
-    rows = [r[0] for r in cursor.fetchall()]
-    cursor.close()
-    conn.close()
+        prev_month_year = prev_date.strftime("%b-%Y")
 
-    # Current month not in DB yet
-    if current_month_year not in rows:
+        # Check if that month exists in DB for this user
+        conn   = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT month_year FROM monthly_summary
+            WHERE month_year = %s AND user_id = %s
+        """, (prev_month_year, user_id))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        return prev_month_year if result else None
+
+    except Exception as e:
+        print(f"Error getting previous month: {e}")
         return None
-
-    idx = rows.index(current_month_year)
-
-    # First month — no previous
-    if idx == 0:
-        return None
-
-    # Return immediately previous month
-    return rows[idx - 1]
 
 
 def get_monthly_history(user_id):
