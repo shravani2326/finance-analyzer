@@ -350,24 +350,12 @@ else:
                     else:
                         st.info("⚙️ Set your budget above to see Budget vs Actual chart.")
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.subheader("📈 Daily Spending Trend")
-                    daily         = expenses.copy()
-                    daily["Date"] = pd.to_datetime(daily["Date"])
-                    current_month = daily["Date"].dt.to_period("M").mode()[0]
-                    daily         = daily[daily["Date"].dt.to_period("M") == current_month]
-                    daily_spend   = daily.groupby("Date")["Amount"].sum().abs().reset_index()
-                    fig_line      = px.line(daily_spend, x="Date", y="Amount", markers=True)
-                    st.plotly_chart(fig_line, use_container_width=True)
-
-                with col2:
-                    st.subheader("🏆 Top 10 Expenses")
-                    top10           = expenses.nlargest(10, "Amount")[["Description","Amount"]].copy()
-                    top10["Amount"] = top10["Amount"].abs()
-                    fig_top         = px.bar(top10, x="Amount", y="Description", orientation="h")
-                    fig_top.update_layout(yaxis=dict(autorange="reversed"))
-                    st.plotly_chart(fig_top, use_container_width=True)
+                st.subheader("🏆 Top 10 Expenses")
+                top10           = expenses.nlargest(10, "Amount")[["Description","Amount"]].copy()
+                top10["Amount"] = top10["Amount"].abs()
+                fig_top         = px.bar(top10, x="Amount", y="Description", orientation="h")
+                fig_top.update_layout(yaxis=dict(autorange="reversed"))
+                st.plotly_chart(fig_top, use_container_width=True)
 
                 st.subheader("📄 All Transactions")
                 st.dataframe(
